@@ -31,6 +31,11 @@ defmodule HelloWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :review_checks do
+    plug :ensure_authenticated_user
+    plug :ensure_user_owns_review
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -44,9 +49,15 @@ defmodule HelloWeb.Router do
     end
     # resources "/posts", PostController, only: [:index, :show]
     resources "/comments", PostController, except: [:delete]
-    resources "/reviews", ReviewController
+    # resources "/reviews", ReviewController
     get "/hello", HelloController, :index
     get "/hello/:messenger", HelloController, :show
+  end
+
+  scope "/reviews", HelloWeb do
+    pipe_through :review_checks
+
+    resources "/", ReviewController
   end
 
   scope "/admin", HelloWeb.Admin, as: :admin do
