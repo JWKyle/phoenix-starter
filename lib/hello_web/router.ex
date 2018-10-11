@@ -39,8 +39,10 @@ defmodule HelloWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
-    resources "/users", UserController
-    resources "/posts", PostController, only: [:index, :show]
+    resources "/users", UserController do
+      resources "/posts", PostController
+    end
+    # resources "/posts", PostController, only: [:index, :show]
     resources "/comments", PostController, except: [:delete]
     get "/hello", HelloController, :index
     get "/hello/:messenger", HelloController, :show
